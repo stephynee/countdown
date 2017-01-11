@@ -40,6 +40,12 @@ button {
   margin-top: 20px;
 }
 
+#add > div:nth-child(2),
+#add > div:nth-child(3),
+#add button {
+  display: none;
+}
+
 .event {
   width: 150px;
 }
