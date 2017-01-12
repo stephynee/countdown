@@ -39,23 +39,70 @@
         m = document.querySelector('.month').value,
         d = document.querySelector('.day').value,
         y = document.querySelector('.year').value,
-        eventDate = new Date(y, m-1, d);
+        event = {
+          eventTitle: eventInput,
+          eventDate: new Date(y, m-1, d)
+        };
 
     if(document.querySelector('.empty')) {
       document.querySelector('.empty').remove();
     }
 
-    events.push({eventTitle:eventTitle, eventDate:eventDate});
+    events.push(event);
     toggleAddEvent();
+    buildEvents([event]);
   }
 
-  function countdown(eventDate) {
+  function countdown(eventDate, timeDivs) {
+    var timer = setInterval(function time() {
+      var timeRemaining = Math.round((eventDate - Date.now())/1000);
 
+      if(timeRemaining < 0) {
+        clearInterval(timeRemaining);
+        return;
+      }
+
+      timeDivs[0].firstChild.textContent = Math.floor(timeRemaining / 86400);
+      timeDivs[1].firstChild.textContent = Math.floor(timeRemaining / 3600) % 24;
+      timeDivs[2].firstChild.textContent = Math.floor(timeRemaining / 60) % 60;
+      timeDivs[3].firstChild.textContent = timeRemaining % 60;
+
+      return time;
+    }(), 1000);
   }
 
-  //function that goes through all the event objects and starts timers for them
+  function buildEvents(events) {
+    if(events.length > 0) {
+      var classes = ['days', 'hours', 'minutes', 'seconds'];
+
+      events.forEach(function(event) {
+        var eventTitle = document.createElement('h1'),
+            timeDiv = document.createElement('div');
+
+        for(var i = 0; i < 4; i++ ) {
+          var div = document.createElement('div');
+            for(var j = 0; j < 2; j++) {
+              var span = document.createElement('span');
+              div.appendChild(span);
+
+              if(j === 1) {
+                span.textContent = classes[i];
+              }
+            }
+          div.setAttribute('class', classes[i]);
+          timeDiv.appendChild(div);
+        }
+
+        timeDiv.setAttribute('class', 'time');
+        eventTitle.textContent = event.eventTitle;
+        container.appendChild(eventTitle);
+        container.appendChild(timeDiv);
+        countdown(event.eventDate, timeDiv.childNodes);
+      });
+    }
+  }
 
   plusButton.addEventListener('click', toggleAddEvent);
   addButton.addEventListener('click', addEvent);
-
+  buildEvents(events);
 }());
