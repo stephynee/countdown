@@ -11,20 +11,51 @@
 //days left hours left minutes left seconds left
 
 (function() {
-  var plusButton = document.querySelector('#add span'),
+
+  var container = document.querySelector('#container'),
+      plusButton = document.querySelector('#add span'),
       eventDiv = document.querySelector('#add > div:nth-child(2)'),
       dateDiv = document.querySelector('#add > div:nth-child(3)')
       addButton = document.querySelector('#add button');
 
+  var events = [];
+
   function toggleAddEvent() {
-    eventDiv.style.display = isHidden(eventDiv) === 'none' ? 'block' : 'none';
-    dateDiv.style.display = isHidden(dateDiv) === 'none' ? 'block' : 'none';
-    addButton.style.display = isHidden(addButton) === 'none' ? 'block' : 'none';
+    //show and hide add event elements
+    var arr = [eventDiv, dateDiv, addButton];
+
+    for(var i = 0, l = arr.length; i < l; i++) {
+      arr[i].style.display = isHidden(arr[i]) === 'none' ? 'block' : 'none';
+    }
   }
 
   function isHidden(el) {
+    //check the value of display property
     return window.getComputedStyle(el, null).getPropertyValue('display')
   }
 
+  function addEvent() {
+    var eventInput = document.querySelector('.event').value,
+        m = document.querySelector('.month').value,
+        d = document.querySelector('.day').value,
+        y = document.querySelector('.year').value,
+        eventDate = new Date(y, m-1, d);
+
+    if(document.querySelector('.empty')) {
+      document.querySelector('.empty').remove();
+    }
+
+    events.push({eventTitle:eventTitle, eventDate:eventDate});
+    toggleAddEvent();
+  }
+
+  function countdown(eventDate) {
+
+  }
+
+  //function that goes through all the event objects and starts timers for them
+
   plusButton.addEventListener('click', toggleAddEvent);
+  addButton.addEventListener('click', addEvent);
+
 }());
