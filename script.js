@@ -72,13 +72,11 @@
   }
 
   function buildEvents(events) {
+    
     if(events.length > 0) {
-
-      if(document.querySelector('.empty')) {
-        document.querySelector('.empty').remove();
-      }
-
       var classes = ['days', 'hours', 'minutes', 'seconds'];
+
+      toggleEmpty(events);
 
       events.forEach(function(event) {
         var containerDiv = document.createElement('div');
@@ -108,14 +106,7 @@
           events.splice(getNodeIndex(this), 1);
           localStorage.setItem('eventTimers', JSON.stringify(events));
           containerDiv.remove();
-
-          if(events.length < 1) {
-            var emptyH1 = document.createElement('h1');
-            emptyH1.setAttribute('class', 'empty');
-            emptyH1.textContent = 'Add an event';
-            container.appendChild(emptyH1);
-          }
-
+          toggleEmpty(events);
         });
 
         containerDiv.appendChild(eventTitle);
@@ -128,6 +119,17 @@
 
   function getNodeIndex(element) {
     return Array.from(element.parentNode.children).indexOf(element);
+  }
+
+  function toggleEmpty(events) {
+    if(document.querySelector('.empty')) {
+      document.querySelector('.empty').remove();
+    } else if(events.length < 1) {
+      var emptyH1 = document.createElement('h1');
+      emptyH1.setAttribute('class', 'empty');
+      emptyH1.textContent = 'Add an event';
+      container.appendChild(emptyH1);
+    }
   }
 
   plusButton.addEventListener('click', toggleAddEvent);
