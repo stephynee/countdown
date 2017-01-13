@@ -1,12 +1,12 @@
 (function() {
-  var container = document.querySelector('#container'),
+  var container = document.querySelector('.timers'),
       plusButton = document.querySelector('#add span'),
       eventDiv = document.querySelector('#add > div:nth-child(2)'),
       dateDiv = document.querySelector('#add > div:nth-child(3)')
       addButton = document.querySelector('#add button');
 
   var events = [];
-  var timer;
+  var timers = [];
 
   function toggleAddEvent() {
     //show and hide add event elements
@@ -49,14 +49,15 @@
   }
 
   function countdown(eventDate, timeDivs) {
-      timer = setInterval(function time() {
+      timers.push (setInterval(function time() {
       var timeRemaining = Math.round((eventDate - Date.now())/1000);
 
       if(timeRemaining < 0) {
+        //this needs a fix
         clearInterval(timer);
         return;
       }
-      console.log(timer);
+
       timeDivs[0].firstChild.textContent = Math.floor(timeRemaining / 86400);
       timeDivs[1].firstChild.textContent = Math.floor(timeRemaining / 3600) % 24;
       timeDivs[2].firstChild.textContent = Math.floor(timeRemaining / 60) % 60;
@@ -64,7 +65,7 @@
 
       //run the timer immediately and return the time function so that set interval has a function to run subsequent times.
       return time;
-    }(), 1000);
+    }(), 1000));
   }
 
   function buildEvents(events) {
@@ -72,7 +73,8 @@
       var classes = ['days', 'hours', 'minutes', 'seconds'];
 
       events.forEach(function(event) {
-        var eventTitle = document.createElement('h1'),
+        var containerDiv = document.createElement('div');
+            eventTitle = document.createElement('h1'),
             timeDiv = document.createElement('div');
 
         for(var i = 0; i < 4; i++ ) {
@@ -92,17 +94,22 @@
         timeDiv.setAttribute('class', 'time');
         eventTitle.textContent = event.eventTitle;
 
-        timeDiv.addEventListener('click', function(e) {
-          // eventTitle.remove();
-          // timeDiv.remove();
-          // clearInterval(timer);
+        containerDiv.addEventListener('click', function() {
+          clearInterval(timers[getNodeIndex(this)]);
+          timers.splice(getNodeIndex(this), 1);
+          containerDiv.remove();
         });
 
-        container.appendChild(eventTitle);
-        container.appendChild(timeDiv);
+        containerDiv.appendChild(eventTitle);
+        containerDiv.appendChild(timeDiv);
+        container.appendChild(containerDiv);
         countdown(event.eventDate, timeDiv.childNodes);
       });
     }
+  }
+
+  function getNodeIndex(element) {
+    return Array.from(element.parentNode.children).indexOf(element);
   }
 
   plusButton.addEventListener('click', toggleAddEvent);

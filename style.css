@@ -23,7 +23,7 @@ button {
   margin: 0 auto;
 }
 
-h1,
+.timers > div,
 #add span,
 button {
   cursor: pointer;
