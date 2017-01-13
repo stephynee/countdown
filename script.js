@@ -7,6 +7,7 @@
 
   var events = [];
   var timers = [];
+  var counterIndex = 0;
 
   function toggleAddEvent() {
     //show and hide add event elements
@@ -49,15 +50,17 @@
   }
 
   function countdown(eventDate, timeDivs) {
+      var i = counterIndex;
+
       timers.push (setInterval(function time() {
       var timeRemaining = Math.round((eventDate - Date.now())/1000);
 
       if(timeRemaining < 0) {
         //this needs a fix
-        clearInterval(timer);
+        clearInterval(timer[i]);
         return;
       }
-
+      console.log(i);
       timeDivs[0].firstChild.textContent = Math.floor(timeRemaining / 86400);
       timeDivs[1].firstChild.textContent = Math.floor(timeRemaining / 3600) % 24;
       timeDivs[2].firstChild.textContent = Math.floor(timeRemaining / 60) % 60;
@@ -66,6 +69,7 @@
       //run the timer immediately and return the time function so that set interval has a function to run subsequent times.
       return time;
     }(), 1000));
+    counterIndex++;
   }
 
   function buildEvents(events) {
