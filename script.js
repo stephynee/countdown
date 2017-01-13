@@ -4,9 +4,9 @@
       eventDiv = document.querySelector('#add > div:nth-child(2)'),
       dateDiv = document.querySelector('#add > div:nth-child(3)')
       addButton = document.querySelector('#add button');
-
-  var events = [];
+// localStorage.clear();
   var timers = [];
+  var events = JSON.parse(localStorage.getItem('eventTimers')) || [];
   var counterIndex = 0;
 
   function toggleAddEvent() {
@@ -40,11 +40,8 @@
       return alert('The event must be in the future');
     }
 
-    if(document.querySelector('.empty')) {
-      document.querySelector('.empty').remove();
-    }
-
     events.push(event);
+    localStorage.setItem('eventTimers', JSON.stringify(events));
     toggleAddEvent();
     buildEvents([event]);
   }
@@ -52,15 +49,17 @@
   function countdown(eventDate, timeDivs) {
       var i = counterIndex;
 
+      //convert dates from local storage back into date objects
+      eventDate = typeof eventDate === 'string' ? new Date(eventDate) : eventDate;
+
       timers.push (setInterval(function time() {
       var timeRemaining = Math.round((eventDate - Date.now())/1000);
 
       if(timeRemaining < 0) {
-        //this needs a fix
         clearInterval(timer[i]);
         return;
       }
-      console.log(i);
+
       timeDivs[0].firstChild.textContent = Math.floor(timeRemaining / 86400);
       timeDivs[1].firstChild.textContent = Math.floor(timeRemaining / 3600) % 24;
       timeDivs[2].firstChild.textContent = Math.floor(timeRemaining / 60) % 60;
@@ -74,6 +73,11 @@
 
   function buildEvents(events) {
     if(events.length > 0) {
+
+      if(document.querySelector('.empty')) {
+        document.querySelector('.empty').remove();
+      }
+
       var classes = ['days', 'hours', 'minutes', 'seconds'];
 
       events.forEach(function(event) {
@@ -101,7 +105,17 @@
         containerDiv.addEventListener('click', function() {
           clearInterval(timers[getNodeIndex(this)]);
           timers.splice(getNodeIndex(this), 1);
+          events.splice(getNodeIndex(this), 1);
+          localStorage.setItem('eventTimers', JSON.stringify(events));
           containerDiv.remove();
+
+          if(events.length < 1) {
+            var emptyH1 = document.createElement('h1');
+            emptyH1.setAttribute('class', 'empty');
+            emptyH1.textContent = 'Add an event';
+            container.appendChild(emptyH1);
+          }
+
         });
 
         containerDiv.appendChild(eventTitle);
