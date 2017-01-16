@@ -72,12 +72,6 @@
   }
 
   function buildEvents(events) {
-    console.log('build called');
-    console.log(events);
-    console.log(localStorage.getItem('eventTimers'));
-    console.log(timers);
-    console.log('-----------------');
-
     if(events.length > 0) {
       var classes = ['days', 'hours', 'minutes', 'seconds'];
 
@@ -106,29 +100,14 @@
         eventTitle.textContent = event.eventTitle;
 
         containerDiv.addEventListener('click', function() {
-          //funkiness when using splice
-          //perhaps store the index?
-          //am I using splice incorrectly?
           var i = getNodeIndex(this);
-          console.log('index: ' + i);
-
           //remove event
-          console.log('Events Before Splice:');
-          console.log(allEvents);
           allEvents.splice(i, 1);
-          console.log('Events After Splice:');
-          console.log(allEvents);
           clearInterval(timers[i]);
           timers.splice(i, 1);
-          console.log('secondSplice');
-          console.log(timers);
-          console.log(timers.length);
+
           //update local storage
-          console.log('Before local storage update');
-          console.log(localStorage.getItem('eventTimers'));
           localStorage.setItem('eventTimers', JSON.stringify(allEvents));
-          console.log('set local storage');
-          console.log(localStorage.getItem('eventTimers'));
 
           containerDiv.remove();
           toggleEmpty(allEvents);
