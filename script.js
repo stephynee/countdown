@@ -4,7 +4,7 @@
       eventDiv = document.querySelector('#add > div:nth-child(2)'),
       dateDiv = document.querySelector('#add > div:nth-child(3)')
       addButton = document.querySelector('#add button');
-// localStorage.clear();
+
   var timers = [];
   var allEvents = JSON.parse(localStorage.getItem('eventTimers')) || [];
   var counterIndex = 0;
