@@ -6,7 +6,7 @@
       addButton = document.querySelector('#add button');
 // localStorage.clear();
   var timers = [];
-  var events = JSON.parse(localStorage.getItem('eventTimers')) || [];
+  var allEvents = JSON.parse(localStorage.getItem('eventTimers')) || [];
   var counterIndex = 0;
 
   function toggleAddEvent() {
@@ -40,8 +40,8 @@
       return alert('The event must be in the future');
     }
 
-    events.push(event);
-    localStorage.setItem('eventTimers', JSON.stringify(events));
+    allEvents.push(event);
+    localStorage.setItem('eventTimers', JSON.stringify(allEvents));
     toggleAddEvent();
     buildEvents([event]);
   }
@@ -72,7 +72,12 @@
   }
 
   function buildEvents(events) {
-    
+    console.log('build called');
+    console.log(events);
+    console.log(localStorage.getItem('eventTimers'));
+    console.log(timers);
+    console.log('-----------------');
+
     if(events.length > 0) {
       var classes = ['days', 'hours', 'minutes', 'seconds'];
 
@@ -101,12 +106,32 @@
         eventTitle.textContent = event.eventTitle;
 
         containerDiv.addEventListener('click', function() {
-          clearInterval(timers[getNodeIndex(this)]);
-          timers.splice(getNodeIndex(this), 1);
-          events.splice(getNodeIndex(this), 1);
-          localStorage.setItem('eventTimers', JSON.stringify(events));
+          //funkiness when using splice
+          //perhaps store the index?
+          //am I using splice incorrectly?
+          var i = getNodeIndex(this);
+          console.log('index: ' + i);
+
+          //remove event
+          console.log('Events Before Splice:');
+          console.log(allEvents);
+          allEvents.splice(i, 1);
+          console.log('Events After Splice:');
+          console.log(allEvents);
+          clearInterval(timers[i]);
+          timers.splice(i, 1);
+          console.log('secondSplice');
+          console.log(timers);
+          console.log(timers.length);
+          //update local storage
+          console.log('Before local storage update');
+          console.log(localStorage.getItem('eventTimers'));
+          localStorage.setItem('eventTimers', JSON.stringify(allEvents));
+          console.log('set local storage');
+          console.log(localStorage.getItem('eventTimers'));
+
           containerDiv.remove();
-          toggleEmpty(events);
+          toggleEmpty(allEvents);
         });
 
         containerDiv.appendChild(eventTitle);
@@ -126,6 +151,7 @@
       document.querySelector('.empty').remove();
     } else if(events.length < 1) {
       var emptyH1 = document.createElement('h1');
+
       emptyH1.setAttribute('class', 'empty');
       emptyH1.textContent = 'Add an event';
       container.appendChild(emptyH1);
@@ -134,5 +160,5 @@
 
   plusButton.addEventListener('click', toggleAddEvent);
   addButton.addEventListener('click', addEvent);
-  buildEvents(events);
+  buildEvents(allEvents);
 }());

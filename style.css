@@ -68,6 +68,9 @@ button {
   outline: none;
 }
 
+.timers {
+  padding-bottom: 40px;
+}
 /*////////////////////////////////
           timer styles
 ////////////////////////////////*/
